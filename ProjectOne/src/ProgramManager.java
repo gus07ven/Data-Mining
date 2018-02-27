@@ -1,8 +1,5 @@
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 // ProgramManager class to control program flow from beginning to end.
 public class ProgramManager {
@@ -44,21 +41,45 @@ public class ProgramManager {
     }
 
     // Second step: read and store transactions from input file.
-    // TODO: Make store a different method?
-    public void readInputFile(){
+    public Set<String> readInputFileIntoSet(){
+        Set<String> uniqueIds = new HashSet<String>();
+        int counter = 0;
         try {
             File srcFile = new File(input_file_path);
-            Scanner input = new Scanner(srcFile);
-            Set<String> uniqueIds = new HashSet<String>();
-            while(input.hasNext()){
-                String idInput = input.next();
-                uniqueIds.add(idInput);
-                System.out.println(uniqueIds);
+            BufferedReader reader = new BufferedReader(new FileReader(srcFile));
+            String line;
+
+            while((line = reader.readLine()) != null) {
+                Scanner input = new Scanner(line);
+                while (input.hasNext()) {
+                    String idInput = input.next();
+                    uniqueIds.add(idInput);
+                    counter++;
+                    System.out.println(idInput);
+                }
             }
         } catch (IOException e){
             e.printStackTrace();
         }
+        System.out.println(counter);
+        System.out.println(uniqueIds);
+        System.out.println(uniqueIds.size());
+        return uniqueIds;
     }
+
+    // Third step: Turn set into HashMap
+    public Map<String, Integer> turnSetIntoHashMap(Set<String> uniqueIdSet){
+        Map<String, Integer> idMap = new HashMap<>();
+        int index = 0;
+        for(String str : uniqueIdSet){
+            idMap.put(str, index++);
+        }
+        System.out.println("Print map" + idMap);
+        return idMap;
+    }
+
+    // Fourth step: Turn original uniqueIds into integers
+
 
     // Receive results from algorithm and write to file
     public void writeOutputFile(String output_file_path){
@@ -81,7 +102,9 @@ public class ProgramManager {
 
         ProgramManager programManager = new ProgramManager();
         programManager.readCommandLineArgs(args);
-        programManager.readInputFile();
+        Set results = programManager.readInputFileIntoSet();
+        Map results2 = programManager.turnSetIntoHashMap(results);
+        System.out.println(results2.get("A251NMA8JPGYBL"));
         //programManager.writeOutputFile("C:\\Users\\gustavo.arismendi\\IdeaProjects\\ProjectOne\\");
     }
 }
